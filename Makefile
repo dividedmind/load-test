@@ -3,7 +3,7 @@ LDFLAGS += $(shell pkg-config --libs libcurl) -fopenmp
 
 all: load-authn
 
-load-authn: load-authn.o
+load-authn: load-authn.o load.o
 	gcc $^ $(LDFLAGS) -o $@
 
 .PHONY: all clean
