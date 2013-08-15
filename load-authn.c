@@ -3,6 +3,8 @@
 #include <signal.h>
 #include <time.h>
 
+#include "conjur/authn.h"
+
 #define NS_IN_SEC 1000000000
 
 static inline long timediff_ns(struct timespec new, struct timespec old)
@@ -33,7 +35,7 @@ int main(int argc, char **argv)
   const char * username = argv[1];
   const char * password = argv[2];
   
-  char * token[256];
+  char token[1024];
   
   struct timespec last_time, first_time, new_time;
   
@@ -44,7 +46,7 @@ int main(int argc, char **argv)
   int last_count = 0;
   
   while (!finish) {
-    // conjur_authenticate(username, password, *token);
+    conjur_authenticate(username, password, token);
     count++;
     
     clock_gettime(CLOCK_MONOTONIC, &new_time);
