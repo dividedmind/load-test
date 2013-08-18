@@ -11,7 +11,8 @@ static size_t noop_write(char *ptr, size_t size, size_t nmemb, void *_buf)
 
 static void usage()
 {
-  puts("Usage:\n\tload-authn <username> <password>\n");
+  puts("Usage:\n\tload-authn <username> [<password>]\n\n"
+       "Password can also be passed in CONJUR_PASSWD environment variable.");
   exit(1);
 }
 
@@ -19,11 +20,15 @@ static CURL *curl;
 
 int load_test_init(int argc, char **argv)
 {
-  if (argc < 3)
+  if (argc < 2)
     usage();
   
   const char * username = argv[1];
-  const char * password = argv[2];
+  char * password;
+  if (argc == 3)
+    password = argv[2];
+  else if (!(password = getenv("CONJUR_PASSWD")))
+    usage();
   
   char * base_url = getenv("CONJUR_AUTHN_URL");
   if (!base_url)
