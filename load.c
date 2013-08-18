@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
+#include <omp.h>
 
 #include "load.h"
 
@@ -35,8 +36,17 @@ int main(int argc, char **argv)
   
   int err = 0;
   signal(SIGINT, end);
+
+  int nthreads = 0;
+  char *env_thr = getenv("NUM_THREADS");
+  if (env_thr)
+    nthreads = atoi(env_thr);
+  if (!nthreads)
+    nthreads = 16;
   
-  #pragma omp parallel num_threads(16) private(result)
+  omp_set_num_threads(nthreads);
+  
+  #pragma omp parallel private(result)
   {
     result = load_test_prepare();
     
